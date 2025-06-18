@@ -1,10 +1,10 @@
 "use client";
-import React, { useState, useRef, useEffect } from 'react';
-import { Send, Bot, User, Loader2 } from 'lucide-react';
+import React, { useState, useRef, useEffect } from "react";
+import { Send, Bot, User, Loader2 } from "lucide-react";
 
 interface Message {
   id: string;
-  role: 'user' | 'assistant';
+  role: "user" | "assistant";
   content: string;
   timestamp: Date;
 }
@@ -12,19 +12,19 @@ interface Message {
 const ChatBot: React.FC = () => {
   const [messages, setMessages] = useState<Message[]>([
     {
-      id: '1',
-      role: 'assistant',
-      content: 'Hello! I\'m your AI assistant. How can I help you today?',
-      timestamp: new Date()
-    }
+      id: "1",
+      role: "assistant",
+      content: "Hello! I'm your AI assistant. How can I help you today?",
+      timestamp: new Date(),
+    },
   ]);
-  const [inputValue, setInputValue] = useState('');
+  const [inputValue, setInputValue] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
   const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
   useEffect(() => {
@@ -32,10 +32,10 @@ const ChatBot: React.FC = () => {
   }, [messages]);
 
   const formatTime = (date: Date) => {
-    return date.toLocaleTimeString('en-US', {
-      hour: '2-digit',
-      minute: '2-digit',
-      hour12: false
+    return date.toLocaleTimeString("en-US", {
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: false,
     });
   };
 
@@ -44,60 +44,60 @@ const ChatBot: React.FC = () => {
 
     const userMessage: Message = {
       id: Date.now().toString(),
-      role: 'user',
+      role: "user",
       content: inputValue.trim(),
-      timestamp: new Date()
+      timestamp: new Date(),
     };
 
-    setMessages(prev => [...prev, userMessage]);
-    setInputValue('');
+    setMessages((prev) => [...prev, userMessage]);
+    setInputValue("");
     setIsLoading(true);
 
     try {
       // Simulate API call - Replace this with actual OpenAI API call
-      const response = await fetch('/api/chat', {
-        method: 'POST',
+      const response = await fetch("/api/chat", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          messages: [...messages, userMessage].map(msg => ({
+          messages: [...messages, userMessage].map((msg) => ({
             role: msg.role,
-            content: msg.content
-          }))
+            content: msg.content,
+          })),
         }),
       });
 
       if (!response.ok) {
-        throw new Error('Failed to get response');
+        throw new Error("Failed to get response");
       }
 
       const data = await response.json();
-      
+
       const botMessage: Message = {
         id: (Date.now() + 1).toString(),
-        role: 'assistant',
-        content: data.message || 'Sorry, I couldn\'t process your request.',
-        timestamp: new Date()
+        role: "assistant",
+        content: data.message || "Sorry, I couldn't process your request.",
+        timestamp: new Date(),
       };
 
-      setMessages(prev => [...prev, botMessage]);
+      setMessages((prev) => [...prev, botMessage]);
     } catch (error) {
-      console.error('Error:', error);
+      console.error("Error:", error);
       const errorMessage: Message = {
         id: (Date.now() + 1).toString(),
-        role: 'assistant',
-        content: 'Sorry, I encountered an error. Please try again.',
-        timestamp: new Date()
+        role: "assistant",
+        content: "Sorry, I encountered an error. Please try again.",
+        timestamp: new Date(),
       };
-      setMessages(prev => [...prev, errorMessage]);
+      setMessages((prev) => [...prev, errorMessage]);
     } finally {
       setIsLoading(false);
     }
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
+    if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
       sendMessage();
     }
@@ -128,17 +128,27 @@ const ChatBot: React.FC = () => {
           {messages.map((message, index) => (
             <div
               key={message.id}
-              className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'} animate-in fade-in slide-in-from-bottom-4 duration-500`}
+              className={`flex ${
+                message.role === "user" ? "justify-end" : "justify-start"
+              } animate-in fade-in slide-in-from-bottom-4 duration-500`}
               style={{ animationDelay: `${index * 100}ms` }}
             >
-              <div className={`flex items-start space-x-3 max-w-[80%] ${message.role === 'user' ? 'flex-row-reverse space-x-reverse' : ''}`}>
+              <div
+                className={`flex items-start space-x-3 max-w-[80%] ${
+                  message.role === "user"
+                    ? "flex-row-reverse space-x-reverse"
+                    : ""
+                }`}
+              >
                 {/* Avatar */}
-                <div className={`flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center shadow-lg ${
-                  message.role === 'user' 
-                    ? 'bg-gradient-to-br from-blue-500 to-purple-600' 
-                    : 'bg-gradient-to-br from-emerald-500 to-teal-600'
-                }`}>
-                  {message.role === 'user' ? (
+                <div
+                  className={`flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center shadow-lg ${
+                    message.role === "user"
+                      ? "bg-gradient-to-br from-blue-500 to-purple-600"
+                      : "bg-gradient-to-br from-emerald-500 to-teal-600"
+                  }`}
+                >
+                  {message.role === "user" ? (
                     <User className="w-5 h-5 text-white" />
                   ) : (
                     <Bot className="w-5 h-5 text-white" />
@@ -146,27 +156,42 @@ const ChatBot: React.FC = () => {
                 </div>
 
                 {/* Message Bubble */}
-                <div className={`relative px-5 py-4 rounded-2xl shadow-lg max-w-full ${
-                  message.role === 'user'
-                    ? 'bg-gradient-to-br from-blue-500 to-purple-600 text-white rounded-br-md'
-                    : 'bg-white text-gray-800 border border-gray-200 rounded-bl-md'
-                }`}>
+                <div
+                  className={`relative px-5 py-4 rounded-2xl shadow-lg max-w-full ${
+                    message.role === "user"
+                      ? "bg-gradient-to-br from-blue-500 to-purple-600 text-white rounded-br-md"
+                      : "bg-white text-gray-800 border border-gray-200 rounded-bl-md"
+                  }`}
+                >
                   {/* Message tail */}
-                  <div className={`absolute top-4 w-3 h-3 transform rotate-45 ${
-                    message.role === 'user'
-                      ? 'bg-gradient-to-br from-blue-500 to-purple-600 -right-1.5'
-                      : 'bg-white border-r border-b border-gray-200 -left-1.5'
-                  }`}></div>
-                  
+                  <div
+                    className={`absolute top-4 w-3 h-3 transform rotate-45 ${
+                      message.role === "user"
+                        ? "bg-gradient-to-br from-blue-500 to-purple-600 -right-1.5"
+                        : "bg-white border-r border-b border-gray-200 -left-1.5"
+                    }`}
+                  ></div>
+
                   <div className="relative z-10">
-                    <p className={`text-sm leading-relaxed whitespace-pre-wrap font-medium ${
-                      message.role === 'user' ? 'text-white' : 'text-gray-800'
-                    }`}>
-                      {message.content}
-                    </p>
-                    <p className={`text-xs mt-2 ${
-                      message.role === 'user' ? 'text-blue-100' : 'text-gray-500'
-                    }`}>
+                    <p
+                      className={`text-sm leading-relaxed whitespace-pre-wrap font-medium ${
+                        message.role === "user" ? "text-white" : "text-gray-800"
+                      }`}
+                      dangerouslySetInnerHTML={{
+                        __html: message.content.replace(
+                          /\*\*(.*?)\*\*/g,
+                          "<strong>$1</strong>"
+                        ),
+                      }}
+                    ></p>
+
+                    <p
+                      className={`text-xs mt-2 ${
+                        message.role === "user"
+                          ? "text-blue-100"
+                          : "text-gray-500"
+                      }`}
+                    >
                       {formatTime(message.timestamp)}
                     </p>
                   </div>
@@ -174,7 +199,7 @@ const ChatBot: React.FC = () => {
               </div>
             </div>
           ))}
-          
+
           {/* Loading indicator */}
           {isLoading && (
             <div className="flex justify-start animate-in fade-in slide-in-from-bottom-4 duration-300">
@@ -187,16 +212,24 @@ const ChatBot: React.FC = () => {
                   <div className="relative z-10 flex items-center space-x-3">
                     <div className="flex space-x-1">
                       <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
-                      <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
-                      <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+                      <div
+                        className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"
+                        style={{ animationDelay: "0.1s" }}
+                      ></div>
+                      <div
+                        className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"
+                        style={{ animationDelay: "0.2s" }}
+                      ></div>
                     </div>
-                    <span className="text-sm text-gray-600 font-medium">AI is thinking...</span>
+                    <span className="text-sm text-gray-600 font-medium">
+                      AI is thinking...
+                    </span>
                   </div>
                 </div>
               </div>
             </div>
           )}
-          
+
           <div ref={messagesEndRef} />
         </div>
 
@@ -220,8 +253,8 @@ const ChatBot: React.FC = () => {
               disabled={!inputValue.trim() || isLoading}
               className={`w-14 h-14 rounded-2xl flex items-center justify-center transition-all duration-300 shadow-lg transform ${
                 inputValue.trim() && !isLoading
-                  ? 'bg-gradient-to-r from-indigo-500 via-purple-500 to-blue-500 text-white hover:shadow-xl hover:scale-105 active:scale-95'
-                  : 'bg-gray-300 text-gray-500 cursor-not-allowed opacity-50'
+                  ? "bg-gradient-to-r from-indigo-500 via-purple-500 to-blue-500 text-white hover:shadow-xl hover:scale-105 active:scale-95"
+                  : "bg-gray-300 text-gray-500 cursor-not-allowed opacity-50"
               }`}
             >
               {isLoading ? (
